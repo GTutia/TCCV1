@@ -4,7 +4,10 @@
 
     <uses-permission android:name="android.permission.RECEIVE_SMS" /> <!-- permissão para utilizar o Receiver de SMS -->
     <uses-permission android:name="android.permission.SEND_SMS" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"></uses-permission>
 
     <application
         android:allowBackup="true"
@@ -30,11 +33,13 @@
 
         <activity android:name=".ParametrosSeguranca" />
         <activity android:name=".EditarContato" />
-        <activity android:name=".EditarEndereco"></activity>
+        <activity android:name=".EditarEndereco" />
 
-        <!--<meta-data
+        <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDFHPSi15iO9srIWWk9YnSLkfvTLX7yRUU"></meta-data>-->
+            android:value="@string/google_maps_key" />
+
+        <activity android:name=".ConectarDispositivo"></activity>
     </application>
 
 </manifest>

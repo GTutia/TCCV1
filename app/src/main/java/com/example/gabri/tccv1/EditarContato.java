@@ -38,7 +38,12 @@ public class EditarContato extends AppCompatActivity {
                 editor.putString("telefone_contato",et_telefone.getText().toString());
                 editor.commit();
 
-                Toast.makeText(v.getContext(), "Contato atualizado!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(v.getContext(), "Contato atualizado!", Toast.LENGTH_LONG).show();
+
+                Intent intent = new Intent(getBaseContext(), MainActivity.class);// New activity
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                finish();
             }
         });
 

@@ -24,11 +24,9 @@ public class SMSReceiver extends BroadcastReceiver
                 msgs[i] = SmsMessage.createFromPdu((byte[])pdus[i]);
                 str = msgs[i].getMessageBody().toString();
             }
-            //---display the new SMS message---
-            Toast.makeText(context, str, Toast.LENGTH_SHORT).show();
         }
 
-        if(str.equals("codigo")){
+        if(str.equals("ALERTA")){
             Intent i = new Intent(context, EstadoPaciente.class);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(i);

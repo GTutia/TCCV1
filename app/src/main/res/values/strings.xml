@@ -17,4 +17,9 @@
     <string name="botao_cadastrar">CADASTRAR</string>
     <string name="titulo_cadastro_endereco">Endereço</string>
     <string name="botao_cadastro_endereco">CADASTRAR</string>
+    <string name="google_maps_key">AIzaSyDXYycX9qDpUrYdntKypxHV_skEY3E49GI</string>
+    <string name="conectar_dispositivo">CONECTAR DISPOSITIVO</string>
+    <string name="texto_conectar">Após parear o dispositivo, insira a chave no campo abaixo e clique em conectar</string>
+    <string name="botao_conextar">CONECTAR</string>
+    <string name="sugestão_chave">Chave</string>
 </resources>
