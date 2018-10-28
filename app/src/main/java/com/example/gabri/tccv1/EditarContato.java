@@ -22,7 +22,6 @@ public class EditarContato extends AppCompatActivity {
         et_nome = findViewById(R.id.nome_cadastro);
         et_telefone = findViewById(R.id.telefone_cadastro);
 
-
         Button b_cadastro = (Button) findViewById(R.id.b_cadastro); // Informar estado
         b_cadastro.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -31,7 +30,6 @@ public class EditarContato extends AppCompatActivity {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString("nome_contato",et_nome.getText().toString());
                 editor.commit();
-
 
                 sharedPreferences = getSharedPreferences("telefone_contato", Context.MODE_PRIVATE);
                 editor = sharedPreferences.edit();

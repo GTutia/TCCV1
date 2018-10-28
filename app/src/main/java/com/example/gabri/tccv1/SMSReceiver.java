@@ -25,14 +25,10 @@ public class SMSReceiver extends BroadcastReceiver
                 str = msgs[i].getMessageBody().toString();
             }
         }
-
         if(str.equals("ALERTA")){
             Intent i = new Intent(context, EstadoPaciente.class);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(i);
-
         }
-
     }
-
 }

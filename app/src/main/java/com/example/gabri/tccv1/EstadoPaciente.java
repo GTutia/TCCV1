@@ -33,13 +33,8 @@ public class EstadoPaciente extends AppCompatActivity {
 
     String str_telefone_emerg,str_ESP32, longitude, latitude; //localizacao_atual;
     double d_latitude,d_longitude;
-    private LocationManager locationManager = null;
-    private LocationListener locationListener = null;
     private FusedLocationProviderClient mFusedLocationClient;
 
-
-    //Geocoder geocoder;
-    //List<Address> addresses;
 
     @SuppressLint("MissingPermission")
     @Override
@@ -53,66 +48,6 @@ public class EstadoPaciente extends AppCompatActivity {
         sharedPref = getSharedPreferences("ESP32",Context.MODE_PRIVATE);
         str_ESP32 = sharedPref.getString("ESP32","ESP32_nao_conectado");
 
-
-/*
-        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                longitude = " Longitude: " + String.valueOf(location.getLongitude());
-                latitude = " Latitude: " + String.valueOf(location.getLatitude());
-                d_latitude = location.getLatitude();
-                d_longitude = location.getLongitude();
-
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-
-
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-
-            }
-        };
-
-
-
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-        */
-
-        /*
-
-
-
-        geocoder = new Geocoder(this, Locale.getDefault());
-        try {
-            addresses = geocoder.getFromLocation(d_latitude,d_longitude,1);
-            if(addresses!= null && addresses.size() > 0){
-
-                localizacao_atual = addresses.get(0).getAddressLine(0);
-                Toast.makeText(this, localizacao_atual, Toast.LENGTH_LONG).show();
-
-            }
-            else{
-                Toast.makeText(this, "lista nula", Toast.LENGTH_LONG).show();
-
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        */
-
-
-
         Button b_sim = (Button) findViewById(R.id.b_sim); // Botão de sim
         b_sim.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -120,7 +55,6 @@ public class EstadoPaciente extends AppCompatActivity {
                     Toast.makeText(v.getContext(), "Conecte ao seu dispositivo!", Toast.LENGTH_LONG).show();
                     Intent i = new Intent(v.getContext(), ConectarDispositivo.class);
                     startActivity(i);// Vai para Activity Editar Contato
-
                 }
                 sendSMS(str_ESP32,"Estou bem!");
                 Toast.makeText(getBaseContext(),"Estado enviado!",Toast.LENGTH_LONG).show();
@@ -134,13 +68,10 @@ public class EstadoPaciente extends AppCompatActivity {
         Button b_nao = (Button) findViewById(R.id.b_nao); // Botão de não
         b_nao.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
                 if(str_telefone_emerg.equals("sem_cadatro")){
-
                     Toast.makeText(v.getContext(), "Cadastre um contato de emergência", Toast.LENGTH_LONG).show();
                     Intent i = new Intent(v.getContext(), EditarContato.class);
                     startActivity(i);// Vai para Activity Editar Contato
-
                 }else{
                     mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getBaseContext());
                     mFusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
@@ -154,7 +85,6 @@ public class EstadoPaciente extends AppCompatActivity {
                                 Log.d("LOCATION", String.valueOf(d_latitude));
                                 Log.d("LOCATION", String.valueOf(d_longitude));
                                 sendSMS(str_telefone_emerg, "Socorro! Estou em: http://maps.google.com/maps?q=" + d_latitude+ "," + d_longitude);
-
                             }
                         }
                     });
@@ -166,16 +96,12 @@ public class EstadoPaciente extends AppCompatActivity {
                 }
             }
         });
-
-
     }
 
     private void sendSMS(String phoneNumber, String message) {
-
         SmsManager sms = SmsManager.getDefault();
         ArrayList<String> msgArray = sms.divideMessage(message);
         sms.sendMultipartTextMessage(phoneNumber,null,msgArray,null,null);
-
     }
 
 }

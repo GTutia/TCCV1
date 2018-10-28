@@ -49,8 +49,6 @@ public class ParametrosSeguranca extends AppCompatActivity {
             tv_endereco.setText(str_endereco);
         }
 
-
-
         Button b_editar_contato = (Button) findViewById(R.id.b_editar_contato); // Informar estado
         b_editar_contato.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -97,7 +95,5 @@ public class ParametrosSeguranca extends AppCompatActivity {
         }else{
             tv_endereco.setText(str_endereco);
         }
-
-
     }
 }

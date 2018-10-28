@@ -24,7 +24,6 @@ public class EditarEndereco extends AppCompatActivity {
     List<Address> lista_endereco;
     Address endereco;
     double lat,lng;
-    String str_telefone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,20 +65,6 @@ public class EditarEndereco extends AppCompatActivity {
                 editor = sharedPreferences.edit();
                 editor.putString("endereco_casa_long", String.valueOf(lng));
                 editor.apply();
-
-
-
-
-
-
-
-                /*
-
-                sharedPreferences = getSharedPreferences("telefone_contato", Context.MODE_PRIVATE);
-                str_telefone = sharedPreferences.getString("telefone_contato", "sem_cadastro");
-                SmsManager sms = SmsManager.getDefault();
-                sms.sendTextMessage(str_telefone,null,lat + "," + lng,null,null);
-                */
 
                 Intent intent = new Intent(getBaseContext(), MainActivity.class);// New activity
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

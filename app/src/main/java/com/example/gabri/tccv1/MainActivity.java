@@ -19,40 +19,17 @@ import android.telephony.SmsManager;
 import android.view.View;
 import android.widget.Button;
 
-
-
 public class MainActivity extends AppCompatActivity {
 
-
-/*
-    String[] perms = {"android.permission.FINE_LOCATION", "android.permission.RECEIVE_SMS"};
-    int permsRequestCode = 200;
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case 200: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-
-                } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                }
-                return;
-            }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
-        }
-    }
-*/
+    int PERMISSION_ALL = 1;
+    String[] PERMISSIONS = {
+            Manifest.permission.BLUETOOTH,
+            Manifest.permission.BLUETOOTH_ADMIN,
+            Manifest.permission.READ_SMS,
+            Manifest.permission.SEND_SMS,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION
+    };
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -60,21 +37,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this,Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED){
-          //  requestPermissions(perms,permsRequestCode);
-        //}
-
-
-
-
-      /*
-        builder.setNegativeButton("cancelar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });*/
-
+        ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
 
         Button b_estado = (Button) findViewById(R.id.b_estado); // Informar estado
         b_estado.setOnClickListener(new View.OnClickListener() {
@@ -102,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         SharedPreferences sharedPref = getSharedPreferences("endereco_casa", Context.MODE_PRIVATE);
         String str_endereco = sharedPref.getString("endereco_casa",null);
 
@@ -119,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog dialog = builder.create();
             dialog.show();
         }
-
 
         sharedPref = getSharedPreferences("telefone_contato", Context.MODE_PRIVATE);
         String str_telefone = sharedPref.getString("telefone_contato",null);
