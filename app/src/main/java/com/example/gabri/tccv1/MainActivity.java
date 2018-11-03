@@ -2,22 +2,31 @@ package com.example.gabri.tccv1;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.net.Uri;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.telephony.SmsManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.mobile.client.AWSMobileClient;
+import com.amazonaws.mobile.client.AWSStartupHandler;
+import com.amazonaws.mobile.client.AWSStartupResult;
+import com.amazonaws.mobile.config.AWSConfiguration;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,6 +39,9 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION
     };
+    DynamoDBMapper dynamoDBMapper;
+    int id;
+    int intervalo = 1000*60*2;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -66,9 +78,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         SharedPreferences sharedPref = getSharedPreferences("endereco_casa", Context.MODE_PRIVATE);
-        String str_endereco = sharedPref.getString("endereco_casa",null);
+        String str_endereco = sharedPref.getString("endereco_casa", null);
 
-        if(str_endereco == null) {
+        if (str_endereco == null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setMessage("Por favor adicione o endereço de sua casa").setTitle("Endereço de casa não cadastrado");
             builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
@@ -83,8 +95,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         sharedPref = getSharedPreferences("telefone_contato", Context.MODE_PRIVATE);
-        String str_telefone = sharedPref.getString("telefone_contato",null);
-        if(str_telefone == null) {
+        String str_telefone = sharedPref.getString("telefone_contato", null);
+        if (str_telefone == null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setMessage("Por favor adicione o telefone do contato de emregência").setTitle("Telefone de emergência não cadastrado");
             builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
@@ -97,5 +109,98 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog dialog = builder.create();
             dialog.show();
         }
+
+        //Monitoramento
+
+        AWSMobileClient.getInstance().initialize(this, new AWSStartupHandler() {
+            @Override
+            public void onComplete(AWSStartupResult awsStartupResult) {
+                Log.d("YourMainActivity", "AWSMobileClient is instantiated and you are connected to AWS!");
+            }
+        }).execute();
+
+
+        AWSCredentialsProvider credentialsProvider = AWSMobileClient.getInstance().getCredentialsProvider();
+        AWSConfiguration configuration = AWSMobileClient.getInstance().getConfiguration();
+
+        AmazonDynamoDBClient dynamoDBClient = new AmazonDynamoDBClient(credentialsProvider);
+
+        this.dynamoDBMapper = DynamoDBMapper.builder()
+                .dynamoDBClient(dynamoDBClient)
+                .awsConfiguration(configuration)
+                .build();
+
+        final LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        final LocationListener[] locationListener = new LocationListener[1];
+        id = recupera_ultimo_id();
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, intervalo, 10, locationListener[0] = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                registrarLocal(location.getLatitude(), location.getLongitude(), id);
+                id++;
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        });
+
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        SharedPreferences sharedPreferences = getSharedPreferences("ultimo_id",Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("ultimo_id",id);
+        editor.commit();
+    }
+
+    public void registrarLocal(Double lat, Double lng, double id) {
+
+        final PacientesDO newLoc = new PacientesDO();
+        newLoc.setUserId("0");
+        newLoc.setLatitude(lat);
+        newLoc.setLongitude(lng);
+        newLoc.setLocation(id);
+
+        Log.d("Location", "Location updated!");
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                dynamoDBMapper.save(newLoc);
+                // Item saved
+            }
+        }).start();
+    }
+    public int recupera_ultimo_id(){
+        int id;
+        SharedPreferences sharedPreferences = getSharedPreferences("ultimo_id",Context.MODE_PRIVATE);
+        id = sharedPreferences.getInt("ultimo_id",0);
+        return  id;
+    }
+
 }
