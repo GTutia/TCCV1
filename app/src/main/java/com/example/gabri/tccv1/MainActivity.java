@@ -110,7 +110,8 @@ public class MainActivity extends AppCompatActivity {
             dialog.show();
         }
 
-        //Monitoramento
+        //Monitoramento - DESCOMENTAR A PARTIR DAQUI
+        /*
 
         AWSMobileClient.getInstance().initialize(this, new AWSStartupHandler() {
             @Override
@@ -165,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
             public void onProviderDisabled(String provider) {
 
             }
-        });
+        });*/
 
     }
 
